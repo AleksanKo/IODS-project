@@ -1,4 +1,9 @@
 
 # About the project
 
-*Write a short description about the course and add a link to your GitHub repository here. This is an R Markdown (.Rmd) file so you can use R Markdown syntax.*
+_I am looking forward to get more first-hand experience with R and data visualization and analysis._
+
+My GitHub:  
+https://github.com/AleksanKo/IODS-project
+
+
