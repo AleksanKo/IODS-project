@@ -1,0 +1,7 @@
+# Logistic regression
+
+I have completed the data wrangling exercises: I've read the data from the file with the help of *read.csv* function, created a new dataset by taking columns from the old one and written it to a new file (*write.csv*).
+
+Write a continuous report with a clear structure. There is no need to repeat the assignments in your course diary. The focus of your work should be on the clarity of your report and for full points you should be able to show an understanding of the methods and results used in your analysis. Feel free to also use material outside this course as learning sources. Clear, understandable and comprehensive explanations are worth the full points.
+
+#add code lines

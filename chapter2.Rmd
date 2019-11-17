@@ -1,6 +1,7 @@
-# Insert chapter 2 title here
+# Regression and model validation
 
-*Describe the work you have done this week and summarize your learning.*
+I have completed the data wrangling exercises: I've read the data from the file with the help of *read.csv* function, created a new dataset by taking columns from the old one and written it to a new file (*write.csv*).
+
 
 - Describe your work and results clearly. 
 - Assume the reader has an introductory course level understanding of writing and reading R code as well as statistical methods.
