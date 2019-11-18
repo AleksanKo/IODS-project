@@ -2,6 +2,149 @@
 
 I have completed the data wrangling exercises: I've read the data from the file with the help of *read.csv* function, created a new dataset by taking columns from the old one and written it to a new file (*write.csv*).
 
-Write a continuous report with a clear structure. There is no need to repeat the assignments in your course diary. The focus of your work should be on the clarity of your report and for full points you should be able to show an understanding of the methods and results used in your analysis. Feel free to also use material outside this course as learning sources. Clear, understandable and comprehensive explanations are worth the full points.
+---
+title: "Chapter 3"
+output: html_document
+---
+## Data description
+```{r}
+matpor <- read.csv("http://s3.amazonaws.com/assets.datacamp.com/production/course_2218/datasets/alc.txt", sep=',')
+colnames(matpor)
+```
+The dataset consists of 35 variables. Many factors has only two levels and are thus binary. Such factors include:
 
-#add code lines
+* school (student's school: 'GP' = Gabriel Pereira,'MS' = Mousinho da Silveira)
+* sex ('F' = female, 'M' = male)
+* address (where does the student live: 'U' = urban area, 'R' = rural area)
+* famsize (the number of family members: 'LE3' - less or equal to 3 family members, 'GT3' - greater than 3 family members))
+* Pstatus (whether the student's parents are living together or not: 'T' - living together, 'A' - living apart)
+* nursery (if the student went to nursery school: yes/no)
+* internet (if the student has an Internet access at home: yes/no)
+* schoolsup (if the student gets extra educational support: yes/no)
+* famsup (if the student gets family educational support: yes/no)
+* paid (if the student has extra paid classes within the course subject (Math or Portuguese): yes/no)
+* activities (if the student has extra-curricular activities: yes/no)
+* higher (if the student wants to take higher education: yes/no)
+* romantic (if the student is in a romantic relationship: yes/no)
+
+Other factor variables include:
+
+* Mjob (mother's job: 'teacher', 'health', 'services' (e.g. administrative or police), 'at_home', 'other')
+* Fjob (father's job: same levels as Mjob)
+* reason (the student's reason to choose this school: 'home','reputation', 'course', 'other')
+* guardian (the student's guardian: 'mother', 'father', 'other')
+
+Integer variables include (_if it ranges from 1 to 5, it is a range between "very bad"/"very low" and "excellent"/"very high"_):
+
+* age
+* Medu (mother's education: 0 - none, 1 - primary education (4th grade), 2 - 5th to 9th grade, 3 - secondary education, 4 - higher education)
+* Fedu (father's education: same levels as Medu)
+* traveltime (home to school travel time: 1 - <15 min., 2 - 15 to 30 min., 3 - 30 min. to 1 hour, 4 - >1 hour)
+* studytime (weekly study time: 1 - <2 hours, 2 - 2 to 5 hours, 3 - 5 to 10 hours, 4 - >10 hours)
+* failures
+* famrel (quality of family relationships: from 1 to 5)
+* freetime (free time after school: from 1 to 5)
+* goout (going out with friends: from 1 to 5)
+* Dalc (workday alcohol consumption: from 1 to 5)
+* Walc (weekend alcohol consumption: from 1 to 5)
+* health (current health status: from 1 to 5)
+* absences
+* G1 (first period grade) 
+* G2 (second period grade)
+* G3 (final grade)
+* alc_use (average use of alcohol during the week)
+
+There is also a logical variable _high_use_ which shows if the average alcohol consumption is high (more than 2) or not.
+
+## Hypotheses
+
+I have chosen 4 variables: activities, famrel, higher and internet.
+My hypotheses for them are following:
+
+1. Having extra-curricular activities correlates with low alcohol consumption.
+2. Having good (from 3 to 5) family relationships correlates with low alcohol consumption.
+3. Wish to get a higher education correlates with low alcohol consumption.
+4. Having Internet connection at home correlates with low alcohol consumption.
+
+## Plots
+
+Plot for Hypothesis 1:
+```{r data, echo=FALSE}
+library(ggplot2)
+ggplot(matpor, aes(activities, ..count..)) + geom_bar(aes(fill=high_use))
+```
+It seems that there are more students with high alcohol consumption amongst those who don't have any activities.
+However, the data shows (both visually and mathematically) that the number of students who have a high alcohol consumption is almost the same:
+```{r matpor}
+n1<-nrow(filter(matpor,activities=="yes",high_use==TRUE))
+n2<-nrow(filter(matpor,activities=="no",high_use==TRUE))
+```
+The difference between low alcohol consumption of the active and non-active students is also not so significant:
+
+```{r}
+n3<-nrow(filter(matpor,activities=="yes",high_use==FALSE))
+n4<-nrow(filter(matpor,activities=="no",high_use==FALSE))
+```
+
+Plot for Hypothesis 2:
+```{r, echo=FALSE}
+ggplot(matpor %>% filter(famrel>=3), aes(famrel, ..count..)) + geom_bar(aes(fill=high_use))
+```
+
+It seems like most of the students ranked their family relationships as good or excellent (>250 students) which makes further analysis difficult. However, it is worth noting that the maximal amount of students with a hish alcohol consumption comes from a family with good internal relationships. 
+
+Plot for Hypothesis 3:
+```{r, echo=FALSE}
+ggplot(matpor, aes(higher, ..count..)) + geom_bar(aes(fill=high_use))
+```
+
+There is also no correlation between striving to get a higher education and alcohol consumption, sinse almost every student wants to get a higher education.
+
+Plot for Hypothesis 4:
+```{r, echo=FALSE}
+ggplot(matpor, aes(internet, ..count..)) + geom_bar(aes(fill=high_use))
+```
+
+Almost the same results as for Hypothesis 1: there seems no correlation between having Internet and alcohol consumption. Only 15 students who don't have Internet at home drink alcohol a lot, but there are 97 who drink a lot of alcohol and have Internet. However, if we count the percentage, it turns out that 26% of those without Internet drink alcohol and the corresponding amount of the students with Internet is 30%. The same filter (as in Hypothesis 1) was used to count the numbers:
+```{r}
+i<-nrow(filter(matpor,internet=="yes",high_use==TRUE))
+```
+## Logistic regression model
+
+```{r}
+m <- glm(high_use ~ activities + famrel + internet + higher, data = matpor, family = "binomial")
+summary(m)
+coef(m)
+OR <- exp(coef(m))
+OR
+```
+1. Each one-unit change in famrel makes high_use less likely by 28.9%
+2. If the student has any activities, the possibility that he has high alcohol consumption is reduced by 24%
+3. If the student is planning to get a higher education, the possibility that he has high alcohol consumption is reduced by 82%
+4. If the student has internet at home, then the odds of him/her drinking a lot is increased by 27.3%
+
+## Probabilities
+```{r, echo=FALSE}
+probabilities <- predict(m, type = "response")
+alc <- mutate(alc, probability = probabilities)
+alc <- mutate(alc, prediction = probability > 0.5)
+table(high_use = alc$high_use, prediction = alc$prediction)
+  g <- ggplot(alc, aes(x = probability, y = high_use, col=prediction))
+geom<-g + geom_point(aes(x = probability, y = high_use, col=prediction))
+show(geom)
+```
+The prediction is wrong in 119 cases. Only 5 cases are true positive as TRUE, but 258 cases are true positive as FALSE.
+```{r}
+loss_func <- function(class, prob) {
+  n_wrong <- abs(class - prob) > 0.5
+  mean(n_wrong)
+}
+
+loss_func(alc$high_use,alc$probability)
+
+library(boot)
+cv <- cv.glm(data = alc, cost = loss_func, glmfit = m, K = 10)
+
+cv$delta[1]
+```
+The number of the wrong predictions on the testing data is the same as on the traning data.
