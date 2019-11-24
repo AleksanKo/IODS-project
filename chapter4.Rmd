@@ -1,0 +1,88 @@
+---
+title: "Chapter 4"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Clustering and classification
+
+Data wrangling exercises are done in the corresponding R script.
+
+## Analysis exercises
+
+Firstly, the Boston dataset is loaded from the MASS package:
+
+```{r}
+library(MASS)
+library(dplyr)
+data(Boston)
+str(Boston)
+dim(Boston)
+```
+The data has 14 variables, all of them are either numeric or integer.
+Variables include e.g. crime rate by town per capita (_crim_), nitrogen oxides concentration (_nox_), index of accessibility to radial highways (_rad_), pupil-teacher ratio by town (_ptratio_), average number of rooms per dwelling (_rm_) and others.
+
+```{r}
+summary(Boston)
+```
+
+_rad_ (index of accessibility ro radial highways) varies from 1 to 24. _lstat_ (lower status of the population (in percents)) has several outliers: min lstat is 1.73%, max lstat is 37.97 %, and the mean is 12.65%. There is also a noticeable outlier in _crim_ variable: max crim = 87.98. An outlier is also present in _black_ variable (1000(Bk - 0.63)^2 where Bk is the proportion of blacks by town): min black = 0.32.
+
+```{r}
+pairs(Boston)
+```
+
+There is a clear hyperbolic relationship between _nox_ and _dis_ (weighted mean of distances to five Boston employment centres) variables: the more the concentration of nitrogen oxides, the less the weighted mean of distances to employment centers. Thus, we can say that there is a correlation between nitrogen oxides and employments centers.
+
+There is also a hyperbolic relationship between _lstat_ and _medv_ (median value of owner-occupied homes in $1000s) variables: the lower the status of the population, the less the median cost of the homes in the area, which is pretty logical.
+
+There is almost a linear correlation between _rm_ (average number of rooms per dwelling) and _lstat_ variables: the more rooms in the dwelling, the more the median cost of the homes and vice versa.
+
+Now the dataset will be standardized and a new variable will be added to the dataset (the old variable _crim_ will be dropped):
+```{r}
+boston_scaled <- scale(Boston)
+summary(boston_scaled)
+boston_scaled <- as.data.frame(boston_scaled)
+summary(boston_scaled$crim)
+ 
+#creating a new variable
+breakpoints <- quantile(boston_scaled$crim)
+labels <- c('low','med_low','med_high','high')
+crime <- cut(boston_scaled$crim, breaks = breakpoints, include.lowest = TRUE, label=labels)
+
+#dropping and adding variables
+boston_scaled <- dplyr::select(boston_scaled, -crim)
+boston_scaled <- data.frame(boston_scaled, crime)
+```
+
+Diving the data to train and test data:
+
+```{r}
+n <- nrow(boston_scaled)
+random_rows <- sample(n,  size = n * 0.8)
+train_data <- boston_scaled[random_rows,]
+test_data <- boston_scaled[-random_rows,]
+```
+
+### Linear discriminant analysis
+
+Fitting and plotting the LDA:
+
+```{r}
+lda.fit <- lda(crime ~ ., data = train_data)
+classes <- as.numeric(train_data$crime)
+plot(lda.fit, dimen = 2,col=classes,pch=classes)
+```
+
+Predicting the classes with the LDA model:
+```{r}
+correct_classes <- test_data[,"crime"]
+test_data <- dplyr::select(test_data, -crime)
+
+lda.pred <- predict(lda.fit, newdata = test_data)
+table(correct = correct_classes, predicted = lda.pred$class)
+```
+Overall results show that high crime rate was predicted correctly (there is only one case when medium high crime rate was predicted wrong as high). Low crime rate was predicted correctly for 17 cases, for 13 cases it was predicted as med_low and for 2 - as med_high. Medium low crime rate was predicted correctly 15 times with only 6 errors.  
