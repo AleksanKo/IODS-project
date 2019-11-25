@@ -85,4 +85,37 @@ test_data <- dplyr::select(test_data, -crime)
 lda.pred <- predict(lda.fit, newdata = test_data)
 table(correct = correct_classes, predicted = lda.pred$class)
 ```
-Overall results show that high crime rate was predicted correctly (there is only one case when medium high crime rate was predicted wrong as high). Low crime rate was predicted correctly for 17 cases, for 13 cases it was predicted as med_low and for 2 - as med_high. Medium low crime rate was predicted correctly 15 times with only 6 errors.  
+Overall results show that high crime rate was predicted correctly (there is only one case when medium high crime rate was predicted wrong as high). Low crime rate was predicted correctly for 17 cases, for 13 cases it was predicted as med_low and for 2 - as med_high. Medium low crime rate was predicted correctly 15 times with only 6 errors. 
+
+Calculating the distances and visualizing the clusters:
+```{r}
+library(MASS)
+data('Boston')
+boston_scaled_again <- scale(Boston)
+
+dist_eu <- dist(boston_scaled_again)   
+
+km <-kmeans(Boston, centers = 2)
+pairs(Boston, col = km$cluster)
+
+```
+
+The optimal number of clusters is 2: 3 look good already, but one of them (the black one) doesn't seem to be of great significance. More than 3 clusters is abundant.
+In case of _rad, tax_ and _ptratio_ the red cluster clearly shows outliers. There are overlapping clusters in _lstat_ and _medv_ plot: one is corresponding to the bigger amount of people who are of lower status and to the smaller median cost of homes, and the other is corresponding to the bigger amount of people with higher status and to bigger median cost of homes (basically, it is poverty vs richness dichotomy)
+
+Bonus Task:
+```{r}
+model_predictors <- dplyr::select(train_data, -crime)
+# check the dimensions
+dim(model_predictors)
+dim(lda.fit$scaling)
+# matrix multiplication
+matrix_product <- as.matrix(model_predictors) %*% lda.fit$scaling
+matrix_product <- as.data.frame(matrix_product)
+
+install.packages("plotly")
+library("plotly")
+
+#colors from the crime classes
+plot_ly(x = matrix_product$LD1, y = matrix_product$LD2, z = matrix_product$LD3, type= 'scatter3d', mode='markers',color=train_data$crime)
+```
