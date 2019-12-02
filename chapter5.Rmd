@@ -1,0 +1,94 @@
+---
+title: "Chapter 5"
+output: html_document
+---
+
+# Dimentionality reduction techniques
+
+Data wrangling exercises are done in the corresponding R script.
+
+## Analysis exercises
+
+### Graphic overview of the data
+Firstly, the data is read from csv-file:
+```{r}
+library(GGally)
+human_data <- read.csv('data/human1.csv',row.names = 1)
+summary(human_data)
+ggpairs(human_data)
+```
+The plot above visualizes the _human_data_ variables.
+
+The plot below shows the correlations between variables:
+```{r}
+cor(human_data) %>%
+corrplot::corrplot(method='pie', type='upper')
+```
+
+Let's take a look at the *edu_exp* (expected years of schooling). It highly positively correlates with *life_exp* (life expectancy at birth) and with _gni_ (Gross National Income per capita). On the other hand, it is highly negatively correlates with *mat_mor* (maternal mortality ratio) and *adol_birth* (adolescent birth rate) which actually makes sense: the higher the quality of life in the country, the better the level of medical care in it. Maternal mortality also highly correlates with the adolescent birth rate.
+
+However, *parl_perc* (percentage of female representatives in parliament) doesn't seem to correlate highly with anything. It correlates slightly with *lab_ratio* (labour ratio) and *edu_exp*, but not so much.
+
+### PCA on not standardized data
+```{r}
+pca_human <- prcomp(human_data)
+biplot(pca_human, choices = 1:2, cex=c(0.8,1), col=c("blue", "red"))
+```
+
+Only one value (_gni_) went into the PCA. It points towards the negative values of PC1 and to zero of PC2, so we can say that the lower the value of PC1, the higher the GNI.
+
+### PCA on standardized data
+```{r}
+human_std <- scale(human_data)
+pca_human <- prcomp(human_std)
+biplot(pca_human, choices = 1:2, cex=c(0.8,1), col=c("blue", "red"))
+```
+
+In contrast to non-standardized data, all values are included in the PCA.
+
+The expected years of education, life expectancy, Gross National Income and the ratio of females to males having at least secondary education correlate with each other. The lower the value of PC1, the higher the values of these variables.
+
+On the other hand, maternal mortality correlates with the adolescent birth rate (as it was shown in the correlation plot). The higher the value of PC1, the higher the values of these variables.
+
+There is also a correlation between percentage of female representatives in parliament and the ratio of females to males in the labour force, though it is lower than aforementioned correlations. 
+
+### Dealing with the FactoMineR package
+```{r}
+library(FactoMineR)
+library(tidyr)
+data(tea)
+str(tea)
+dim(tea)
+reasons <- c('sex','spirituality', 'healthy','diuretic','exciting', 'relaxing', 'escape.exoticism')
+tea_reason <- select(tea,one_of(reasons))
+gather(tea_reason) %>% ggplot(aes(value)) + geom_bar() + facet_wrap("key", scales = "free") + theme(axis.text.x = element_text(angle = 45, hjust = 1, size = 8))
+```
+
+
+It seems that most respondents are women. Respondents overall think that tea drinking is healthy and relaxing, but is not spiritual nor exciting.
+
+### MCA analysis
+
+```{r}
+mca <- MCA(tea_reason, graph = FALSE)
+summary(mca)
+plot(mca, invisible=c("ind"), habillage = "quali")
+
+desc_dim <- dimdesc(mca, axes = c(1,2))
+# Description of dimension 1
+desc_dim[[1]]
+# Description of dimension 2
+desc_dim[[2]]
+```
+
+*Not diuretic, exciting* and *spirituality* seem to be highly discriminating attributes, since they are far from the origin.
+
+Other plot with ellipses:
+```{r}
+factoextra::fviz_mca_ind(mca, 
+             label = "none", 
+             habillage = "sex",
+             palette = c("#00AFBB", "#E7B800"),
+             addEllipses = TRUE, ellipse.type = "confidence",
+             ggtheme = theme_minimal())
+```
