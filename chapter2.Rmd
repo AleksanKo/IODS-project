@@ -9,4 +9,4 @@ lrn2014 <- read.csv('data/lrn2014.csv')
 str(lrn2014)
 dim(lrn2014)
 ```
-The dataset consists of 166 observations and 7 variables.
+The dataset consists of 166 observations and 7 variables. There is only one factor variable (*gender*), other variables are integer. *attitude* shows global attitude towards statistics, *points* are exam points. *deep* stands for deep approach, *surf* and *stra* for surface and strategic approach respectively.
