@@ -2,4 +2,11 @@
 
 I have completed the data wrangling exercises: I've read the data from the file with the help of *read.csv* function, created a new dataset by taking columns from the old one and written it to a new file (*write.csv*).
 
+## Analysis exercises
 
+```{r}
+lrn2014 <- read.csv('data/lrn2014.csv')
+str(lrn2014)
+dim(lrn2014)
+```
+The dataset consists of 166 observations and 7 variables.

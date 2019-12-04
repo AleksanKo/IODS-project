@@ -32,7 +32,3 @@ lrn14 <- lrn14 %>%
 lrn14 <- filter(lrn14,points!=0)
 
 write.csv(lrn14,'data/lrn2014.csv',row.names = FALSE)
-
-summary(lrn14)
-g1 <- ggplot(lrn14, aes(x = age, y = points, col = gender)) + geom_point()
-show(g1)
