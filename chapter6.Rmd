@@ -1,7 +1,10 @@
 ---
-title: "Chapter6"
+title: "Chapter 6"
 output: html_document
 ---
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
 
 # Analysis of longitudinal data
 
@@ -79,17 +82,16 @@ ggplot(RATS1, aes(x = Time, y = mean, linetype = Group, shape = Group)) +
 
 The patterns of weight changing are similar for Group 2 and Group 3, e.g. on the 45rd day there is a decrease in weight, but already on the next day it has risen and continues rising. It is also worth noting that the weight in Group 2 is more diverse and the least difference between weight is in Group 1.
 
-
 ```{r}
 #Now let's do the analysis of covariance: 
-#Rises an error
+#t.test rises an error
 RATS2 <- RATS %>%
   filter(Time > 0) %>%
   group_by(Group, ID) %>%
   summarise( mean=mean(Weight) ) %>%
   ungroup()
 
-RATS%>%t.test(mean ~ Group)
+#RATS%>%t.test(mean ~ Group)
 
 RATS1 <- read.csv("data/RATS.csv")
 
@@ -97,10 +99,8 @@ RATS2 <- RATS2 %>%
   mutate(baseline = RATS1$WD1)
 
 fit <- lm(mean ~ baseline + Group, data = RATS2)
-
 anova(fit)
 ```
-
 
 ### Part 2. BPRS Data
 
