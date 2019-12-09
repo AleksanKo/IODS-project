@@ -31,6 +31,7 @@ summary(Boston)
 
 _rad_ (index of accessibility ro radial highways) varies from 1 to 24. _lstat_ (lower status of the population (in percents)) has several outliers: min lstat is 1.73%, max lstat is 37.97 %, and the mean is 12.65%. There is also a noticeable outlier in _crim_ variable: max crim = 87.98. An outlier is also present in _black_ variable (1000(Bk - 0.63)^2 where Bk is the proportion of blacks by town): min black = 0.32.
 
+
 ```{r}
 pairs(Boston)
 ```

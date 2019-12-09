@@ -2,10 +2,6 @@
 title: "Chapter 6"
 output: html_document
 ---
-```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
-```
-
 # Analysis of longitudinal data
 
 Data wrangling exercises are done in the corresponding R script.
