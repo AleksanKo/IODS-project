@@ -7,6 +7,7 @@
 <meta charset="utf-8" />
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
 
 
 
@@ -268,7 +269,6 @@ code {
 }
 img {
   max-width:100%;
-  height: auto;
 }
 .tabbed-pane {
   padding-top: 12px;
@@ -342,18 +342,6 @@ summary {
 }
 </style>
 
-<script>
-$(document).ready(function () {
-  window.buildTabsets("TOC");
-});
-
-$(document).ready(function () {
-  $('.tabset-dropdown > .nav-tabs > li').click(function () {
-    $(this).parent().toggleClass('nav-tabs-open')
-  });
-});
-</script>
-
 <!-- code folding -->
 
 
@@ -379,12 +367,23 @@ $(document).ready(function () {
 
 <div id="regression-and-model-validation" class="section level1">
 <h1>Regression and model validation</h1>
-<p>I have completed the data wrangling exercises: I’ve read the data from the file with the help of <em>read.csv</em> function, created a new dataset by taking columns from the old one and written it to a new file(<em>write.csv</em>).</p>
-<ul>
-<li>Describe your work and results clearly.</li>
-<li>Assume the reader has an introductory course level understanding of writing and reading R code as well as statistical methods.</li>
-<li>Assume the reader has no previous knowledge of your data or the more advanced methods you are using.</li>
-</ul>
+<p>I have completed the data wrangling exercises: I’ve read the data from the file with the help of <em>read.csv</em> function, created a new dataset by taking columns from the old one and written it to a new file (<em>write.csv</em>).</p>
+<div id="analysis-exercises" class="section level2">
+<h2>Analysis exercises</h2>
+<pre class="r"><code>lrn2014 &lt;- read.csv('data/lrn2014.csv')
+str(lrn2014)</code></pre>
+<pre><code>## 'data.frame':    166 obs. of  7 variables:
+##  $ gender  : Factor w/ 2 levels &quot;F&quot;,&quot;M&quot;: 1 2 1 2 2 1 2 1 2 1 ...
+##  $ age     : int  53 55 49 53 49 38 50 37 37 42 ...
+##  $ attitude: int  37 31 25 35 37 38 35 29 38 21 ...
+##  $ points  : int  25 12 24 10 22 21 21 31 24 26 ...
+##  $ deep    : num  3.58 2.92 3.5 3.5 3.67 ...
+##  $ surf    : num  2.58 3.17 2.25 2.25 2.83 ...
+##  $ stra    : num  3.38 2.75 3.62 3.12 3.62 ...</code></pre>
+<pre class="r"><code>dim(lrn2014)</code></pre>
+<pre><code>## [1] 166   7</code></pre>
+<p>The dataset consists of 166 observations and 7 variables. There is only one factor variable (<em>gender</em>), other variables are integer. <em>attitude</em> shows global attitude towards statistics, <em>points</em> are exam points. <em>deep</em> stands for deep approach, <em>surf</em> and <em>stra</em> for surface and strategic approach respectively.</p>
+</div>
 </div>
 
 
@@ -404,6 +403,23 @@ $(document).ready(function () {
 
 
 </script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open')
+  });
+});
+</script>
+
+<!-- code folding -->
+
 
 <!-- dynamically load mathjax for compatibility with self-contained -->
 <script>

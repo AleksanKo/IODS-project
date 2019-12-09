@@ -124,7 +124,7 @@ OR
 4. If the student has internet at home, then the odds of him/her drinking a lot is increased by 27.3%
 
 ## Probabilities
-```{r, echo=FALSE}
+```{r}
 probabilities <- predict(m, type = "response")
 alc <- mutate(alc, probability = probabilities)
 alc <- mutate(alc, prediction = probability > 0.5)
